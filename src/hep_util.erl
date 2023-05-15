@@ -47,6 +47,18 @@ payload_type (?PROTOCOL_M3UA) -> 'm3ua';
 payload_type (?PROTOCOL_IAX) -> 'iax';
 payload_type (?PROTOCOL_H322) -> 'h322';
 payload_type (?PROTOCOL_H321) -> 'h321';
+payload_type (?PROTOCOL_M2PA) -> 'm2pa';
+payload_type (?PROTOCOL_MOS_FULL) -> 'mos_full';
+payload_type (?PROTOCOL_MOS_SHORT) -> 'mos_short';
+payload_type (?PROTOCOL_SIP_JSON) -> 'sip_json';
+payload_type (?PROTOCOL_DNS_JSON) -> 'dns_json';
+payload_type (?PROTOCOL_M3UA_JSON) -> 'm3ua_json';
+payload_type (?PROTOCOL_RTSP) -> 'rtsp';
+payload_type (?PROTOCOL_DIAMETER) -> 'diameter';
+payload_type (?PROTOCOL_GSM_MAP) -> 'gsm_map';
+payload_type (?PROTOCOL_RTCP_PION) -> 'rtcp_pion';
+payload_type (?PROTOCOL_CDR) -> 'cdr';
+payload_type (?PROTOCOL_LOG) -> 'log';
 payload_type ('reserved') -> ?PROTOCOL_RESERVED;
 payload_type ('sip') -> ?PROTOCOL_SIP;
 payload_type ('xmpp') -> ?PROTOCOL_XMPP;
@@ -60,6 +72,18 @@ payload_type ('m3ua') -> ?PROTOCOL_M3UA;
 payload_type ('iax') -> ?PROTOCOL_IAX;
 payload_type ('h322') -> ?PROTOCOL_H322;
 payload_type ('h321') -> ?PROTOCOL_H321;
+payload_type ('m2pa') -> ?PROTOCOL_M2PA;
+payload_type ('mos_full') -> ?PROTOCOL_MOS_FULL;
+payload_type ('mos_short') -> ?PROTOCOL_MOS_SHORT;
+payload_type ('sip_json') -> ?PROTOCOL_SIP_JSON;
+payload_type ('dns_json') -> ?PROTOCOL_DNS_JSON;
+payload_type ('m3ua_json') -> ?PROTOCOL_M3UA_JSON;
+payload_type ('rtsp') -> ?PROTOCOL_RTSP;
+payload_type ('diameter') -> ?PROTOCOL_DIAMETER;
+payload_type ('gsm_map') -> ?PROTOCOL_GSM_MAP;
+payload_type ('rtcp_pion') -> ?PROTOCOL_RTCP_PION;
+payload_type ('cdr') -> ?PROTOCOL_CDR;
+payload_type ('log') -> ?PROTOCOL_LOG;
 payload_type (Protocol) ->
     {error, {invalid_protocol, Protocol}}.
 
