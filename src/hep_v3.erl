@@ -25,6 +25,22 @@
 -define(CAPTURED_COMPRESSED_PAYLOAD, 16#0010).
 -define(INTERNAL_CORRELATION_ID,     16#0011).
 -define(VLAN_ID,                     16#0012).
+-define(CAPTURE_AGENT_STRING_ID,     16#0013).
+-define(SOURCE_MAC,                  16#0014).
+-define(DESTINATION_MAC,             16#0015).
+-define(ETHERNET_TYPE,               16#0016).
+-define(TCP_FLAG,                    16#0017).
+-define(IP_TOS,                      16#0018).
+-define(MOS_VALUE,                   16#0020).
+-define(R_FACTOR,                    16#0021).
+-define(GEO_LOCATION,                16#0022).
+-define(JITTER,                      16#0023).
+-define(TRANSACTION_TYPE,            16#0024).
+-define(PAYLOAD_JSON_KEYS,           16#0025).
+-define(TAGS_VALUES,                 16#0026).
+-define(TYPE_OF_TAGS,                16#0027).
+-define(EVENT_TYPE,                  16#0028).
+-define(GROUP_ID,                    16#0029).
 
 %% Chunk Vendor ID
 -define(VENDOR_UNKNOWN,       16#0000).
@@ -35,7 +51,16 @@
 -define(VENDOR_HOMER_PROJECT, 16#0005).
 -define(VENDOR_SIPXECS,       16#0006).
 
+%% Padding out values
 -define(node_id(Val), (Val):32).
+-define(keep_alive_timer(Val), (Val):16).
+-define(vlan_id(Val), (Val):16).
+-define(ethernet_type(Val), (Val):16).
+-define(mos_value(Val), (Val):16).
+-define(r_factor(Val), (Val):16).
+-define(jitter(Val), (Val):32).
+-define(type_of_tag(Val), (Val):16).
+-define(event_type(Val), (Val):16).
 -define(length(Val), (Val):16).
 
 %% API
@@ -186,7 +211,28 @@ pack_chunks (Hep) ->
              , timestamp
              , node_id
              , payload_type
+             , keep_alive_timer
+             , authenticate_key
              , payload
+             , payload_compressed
+             , internal_correlation_id
+             , vlan_id
+             , capture_agent_string_id
+             , src_mac
+             , dst_mac
+             , ethernet_type
+             , tcp_flag
+             , ip_tos
+             , mos_value
+             , r_factor
+             , geo_location
+             , jitter
+             , transaction_type
+             , payload_json_keys
+             , tags_values
+             , type_of_tag
+             , event_type
+             , group_id
              ],
     << <<(make_chunk(Field, Hep))/binary>> || Field <- Fields >>.
 
@@ -231,8 +277,116 @@ make_chunk (node_id, #hep{node_id = Data}=Hep) ->
 
 make_chunk (payload_type, #hep{payload_type = Data}=Hep) ->
     do_make_chunk(Hep, ?PROTOCOL_TYPE, <<?payload_type(hep_util:payload_type(Data))>>);
+
+make_chunk (keep_alive_timer, #hep{keep_alive_timer = undefined}=_Hep) ->
+    <<>>;
+make_chunk (keep_alive_timer, #hep{keep_alive_timer = Value}=Hep) ->
+    do_make_chunk(Hep, ?KEEP_ALIVE_TIMER, <<?keep_alive_timer(Value)>>);
+
+make_chunk (authenticate_key, #hep{authenticate_key = undefined}=_Hep) ->
+    <<>>;
+make_chunk (authenticate_key, #hep{authenticate_key = Value}=Hep) ->
+    do_make_chunk(Hep, ?AUTHENTICATE_KEY, Value);
+
+make_chunk (payload, #hep{payload = undefined}=_Hep) ->
+    <<>>;
 make_chunk (payload, #hep{payload = Payload}=Hep) ->
-    do_make_chunk(Hep, ?CAPTURED_PACKET_PAYLOAD, Payload).
+    do_make_chunk(Hep, ?CAPTURED_PACKET_PAYLOAD, Payload);
+
+make_chunk (payload_compressed, #hep{payload_compressed = undefined}=_Hep) ->
+    <<>>;
+make_chunk (payload_compressed, #hep{payload_compressed = Payload}=Hep) ->
+    do_make_chunk(Hep, ?CAPTURED_COMPRESSED_PAYLOAD, Payload);
+
+make_chunk (internal_correlation_id, #hep{internal_correlation_id = undefined}=_Hep) ->
+    <<>>;
+make_chunk (internal_correlation_id, #hep{internal_correlation_id = Payload}=Hep) ->
+    do_make_chunk(Hep, ?INTERNAL_CORRELATION_ID, Payload);
+
+make_chunk (vlan_id, #hep{vlan_id = undefined}=_Hep) ->
+    <<>>;
+make_chunk (vlan_id, #hep{vlan_id = VlanId}=Hep) ->
+    do_make_chunk(Hep, ?VLAN_ID, <<?vlan_id(VlanId)>>);
+
+make_chunk (capture_agent_string_id, #hep{capture_agent_string_id = undefined}=_Hep) ->
+    <<>>;
+make_chunk (capture_agent_string_id, #hep{capture_agent_string_id = Value}=Hep) ->
+    do_make_chunk(Hep, ?CAPTURE_AGENT_STRING_ID, Value);
+
+make_chunk (src_mac, #hep{src_mac = undefined}=_Hep) ->
+    <<>>;
+make_chunk (src_mac, #hep{src_mac = Value}=Hep) ->
+    do_make_chunk(Hep, ?SOURCE_MAC, Value);
+
+make_chunk (dst_mac, #hep{dst_mac = undefined}=_Hep) ->
+    <<>>;
+make_chunk (dst_mac, #hep{dst_mac = Value}=Hep) ->
+    do_make_chunk(Hep, ?DESTINATION_MAC, Value);
+
+make_chunk (ethernet_type, #hep{ethernet_type = undefined}=_Hep) ->
+    <<>>;
+make_chunk (ethernet_type, #hep{ethernet_type = Value}=Hep) ->
+    do_make_chunk(Hep, ?ETHERNET_TYPE, <<?ethernet_type(Value)>>);
+
+make_chunk (tcp_flag, #hep{tcp_flag = undefined}=_Hep) ->
+    <<>>;
+make_chunk (tcp_flag, #hep{tcp_flag = Value}=Hep) ->
+    do_make_chunk(Hep, ?TCP_FLAG, Value);
+
+make_chunk (ip_tos, #hep{ip_tos = undefined}=_Hep) ->
+    <<>>;
+make_chunk (ip_tos, #hep{ip_tos = Value}=Hep) ->
+    do_make_chunk(Hep, ?IP_TOS, Value);
+
+make_chunk (mos_value, #hep{mos_value = undefined}=_Hep) ->
+    <<>>;
+make_chunk (mos_value, #hep{mos_value = Value}=Hep) ->
+    do_make_chunk(Hep, ?MOS_VALUE, <<?mos_value(Value)>>);
+
+make_chunk (r_factor, #hep{r_factor = undefined}=_Hep) ->
+    <<>>;
+make_chunk (r_factor, #hep{r_factor = Value}=Hep) ->
+    do_make_chunk(Hep, ?R_FACTOR, <<?r_factor(Value)>>);
+
+make_chunk (geo_location, #hep{geo_location = undefined}=_Hep) ->
+    <<>>;
+make_chunk (geo_location, #hep{geo_location = Value}=Hep) ->
+    do_make_chunk(Hep, ?GEO_LOCATION, Value);
+
+make_chunk (jitter, #hep{jitter = undefined}=_Hep) ->
+    <<>>;
+make_chunk (jitter, #hep{jitter = Value}=Hep) ->
+    do_make_chunk(Hep, ?JITTER, <<?jitter(Value)>>);
+
+make_chunk (transaction_type, #hep{transaction_type = undefined}=_Hep) ->
+    <<>>;
+make_chunk (transaction_type, #hep{transaction_type = Value}=Hep) ->
+    do_make_chunk(Hep, ?TRANSACTION_TYPE, Value);
+
+make_chunk (payload_json_keys, #hep{payload_json_keys = undefined}=_Hep) ->
+    <<>>;
+make_chunk (payload_json_keys, #hep{payload_json_keys = Value}=Hep) ->
+    do_make_chunk(Hep, ?PAYLOAD_JSON_KEYS, Value);
+
+make_chunk (tags_values, #hep{tags_values = undefined}=_Hep) ->
+    <<>>;
+make_chunk (tags_values, #hep{tags_values = Value}=Hep) ->
+    do_make_chunk(Hep, ?TAGS_VALUES, Value);
+
+make_chunk (type_of_tag, #hep{type_of_tag = undefined}=_Hep) ->
+    <<>>;
+make_chunk (type_of_tag, #hep{type_of_tag = Value}=Hep) ->
+    do_make_chunk(Hep, ?TYPE_OF_TAGS, <<?type_of_tag(Value)>>);
+
+make_chunk (event_type, #hep{event_type = undefined}=_Hep) ->
+    <<>>;
+make_chunk (event_type, #hep{event_type = Value}=Hep) ->
+    do_make_chunk(Hep, ?EVENT_TYPE, <<?event_type(Value)>>);
+
+make_chunk (group_id, #hep{group_id = undefined}=_Hep) ->
+    <<>>;
+make_chunk (group_id, #hep{group_id = Value}=Hep) ->
+    do_make_chunk(Hep, ?GROUP_ID, Value).
 
 
 do_make_chunk (#hep{vendor = Vendor}, Type, Value) ->
